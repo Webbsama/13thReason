@@ -25,8 +25,7 @@
 %%%===================================================================
 %%% Public API functions
 %%%===================================================================
--export([start_rand_stream/1,next_rand/1,
-		 start_cipher_stream/1,decipher/2,enqueue/2,dequeue/1]).
+-export([start_rand_stream/1, next_rand/1, rand_stream/1, start_cipher_stream/1, decipher/2, enqueue/2, dequeue/1]).
 
 
 %%
@@ -44,7 +43,8 @@
 %% API Function
 start_rand_stream(Seed)->
     % spawn(module_name, function_name, list of initial parameter)
-	spawn(tasks, rand_stream, [Seed])
+    % ?MODULE is a macro for the current module
+	spawn(?MODULE, rand_stream, [Seed]).
 
 %%
 %% This is a is a client function for the rand_stream stateful actor. 
@@ -58,7 +58,12 @@ start_rand_stream(Seed)->
 %%
 %% API Function
 next_rand(Stream_pid)->
-	to_do.
+    % The ! is the operator that is sending the message to get the next random number.
+    Stream_pid ! self(),
+    % Request the next pid from our worker function below. 
+    receive
+        Rand -> Rand
+    end.
 
 %%
 %% This pseudo-random number stream is implemented using the stateful actor pattern. The state consists of
@@ -81,11 +86,16 @@ next_rand(Stream_pid)->
 %%
 % Worker function >> don't use. 
 rand_stream(Seed)->
-    a = 1103515245
-    c = 12345
-    m = 2147483648
-	rand_result = ((a * Seed) + c) Rem m 
-    rand_result
+    % This is how we get the message from the API function
+    Next_seed = receive
+        Pid ->
+            % (seed * a + c) mod m
+            Rand = (Seed * 1103515245 + 12345) rem 2147483648, 
+            % Sending the message that our pid is the rand. 
+            Pid ! Rand, 
+            Rand
+        end,
+    rand_stream(Next_seed).
 
 
 %%
