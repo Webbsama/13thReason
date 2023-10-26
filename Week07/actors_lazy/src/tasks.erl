@@ -41,9 +41,10 @@
 %% Value - the process ID of the stream.
 %% Complexity - O(1)
 %%
+%% API Function
 start_rand_stream(Seed)->
-    % spawn(module_name, function_name, inital parameter)
-	spawn(tasks, rand_stream, Seed)
+    % spawn(module_name, function_name, list of initial parameter)
+	spawn(tasks, rand_stream, [Seed])
 
 %%
 %% This is a is a client function for the rand_stream stateful actor. 
@@ -55,6 +56,7 @@ start_rand_stream(Seed)->
 %% waits for the response.
 %% Complexity - O(1)
 %%
+%% API Function
 next_rand(Stream_pid)->
 	to_do.
 
@@ -77,7 +79,7 @@ next_rand(Stream_pid)->
 %% parameter tuple. The second element of the value tuple is an empty list.
 %% Complexity - O(1)
 %%
-
+% Worker function >> don't use. 
 rand_stream(Seed)->
     a = 1103515245
     c = 12345
