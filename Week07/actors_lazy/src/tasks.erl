@@ -25,7 +25,7 @@
 %%%===================================================================
 %%% Public API functions
 %%%===================================================================
--export([start_rand_stream/1, next_rand/1, rand_stream/1, start_cipher_stream/1, decipher/2, enqueue/2, dequeue/1]).
+-export([start_rand_stream/1, next_rand/1, rand_stream/1, start_cipher_stream/1, decipher/2, enqueue/2, dequeue/1, cipher_stream/1]).
 
 
 %%
@@ -44,7 +44,7 @@
 start_rand_stream(Seed)->
     % spawn(module_name, function_name, list of initial parameter)
     % ?MODULE is a macro for the current module
-	spawn(?MODULE, rand_stream, [Seed]).
+	spawn(tasks, rand_stream, [Seed]).
 
 %%
 %% This is a is a client function for the rand_stream stateful actor. 
@@ -97,7 +97,6 @@ rand_stream(Seed)->
         end,
     rand_stream(Next_seed).
 
-
 %%
 %% The cipher_stream stateful actor and its client functions.
 %% 
@@ -111,8 +110,7 @@ rand_stream(Seed)->
 %% Complexity - O(n) where n is the number of characters in the message.
 %%
 start_cipher_stream(Shift_amount)->
-	to_do.
-
+	spawn(tasks, cipher_stream, [{Shift_amount, []}]).
 
 %%
 %% decipher is a function that unshifts a Ceasar encyphered message by a specified amount.
@@ -124,7 +122,7 @@ start_cipher_stream(Shift_amount)->
 %% Complexity - O(n) where n is the number of characters in the message.
 %%
 decipher(Message,Unshift_amount)->
-	to_do.
+	lists:map(fun(Character) -> Character - Unshift_amount end, Message).
 
 %%
 %% enqueue is a client function for the cipher_stream stateful actor. Without waiting for a value, 
@@ -138,7 +136,9 @@ decipher(Message,Unshift_amount)->
 %% Complexity - O(1).
 %%
 enqueue(Message,Cipher_pid)->
-	to_do.
+    % Sends the cipher_pid aka the {put, Message} to the cipher_stream
+	Cipher_pid ! {put, Message}.
+
 
 %%
 %% dequeue is a client function for the cipher_stream stateful actor. It retrieves the next
@@ -151,7 +151,12 @@ enqueue(Message,Cipher_pid)->
 %% Complexity - O(1).
 %%
 dequeue(Cipher_pid)->
-	to_do.
+	% Gets the cipher_pid above (enqueue) and sends the results
+    Cipher_pid ! {self(), get},
+    receive
+        Result -> Result
+    end.
+
 
 %%
 %% This cipher stream is implemented using the stateful actor pattern. The state consists of
@@ -176,8 +181,23 @@ dequeue(Cipher_pid)->
 %%
 
 cipher_stream({Shift_amount,Messages})->
-	to_do.
-
+	% Tell it our state
+    Next_state = receive
+        % What happes with {put, Message} from enqueue
+        {put, Message} -> 
+            % Send shift_amount with a new list called Messages that went through each character and encoded it
+            {Shift_amount, Messages++[lists:map(fun(Character) -> Character + Shift_amount end, Message)]};
+        % What happens with {self()(aka Pid), get}.
+        {Pid, get} ->
+            % You have to loop through list which is [h|t] in this case
+            [H|T] = Messages,
+            % Our self() aka Pid will equal the H of the list
+            Pid ! H,
+            % Do the same for T of list
+            {Shift_amount, T}
+    end, 
+    
+    cipher_stream(Next_state).
 
 
 %%% Only include the eunit testing library and functions
@@ -234,7 +254,3 @@ cipher_stream_enqueue_dequeu_test_() ->
     ]}.
 
 -endif.
-
-
-
-	
