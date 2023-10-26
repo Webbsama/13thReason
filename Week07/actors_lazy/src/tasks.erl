@@ -42,7 +42,8 @@
 %% Complexity - O(1)
 %%
 start_rand_stream(Seed)->
-	to_do.
+    % spawn(module_name, function_name, inital parameter)
+	spawn(tasks, rand_stream, Seed)
 
 %%
 %% This is a is a client function for the rand_stream stateful actor. 
@@ -78,7 +79,11 @@ next_rand(Stream_pid)->
 %%
 
 rand_stream(Seed)->
-	to_do.
+    a = 1103515245
+    c = 12345
+    m = 2147483648
+	rand_result = ((a * Seed) + c) Rem m 
+    rand_result
 
 
 %%
