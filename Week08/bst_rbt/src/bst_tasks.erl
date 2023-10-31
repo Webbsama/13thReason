@@ -35,11 +35,34 @@
 %%% Complexity - time: O(log n) space: O(log n)
 %%% @end
 %%%-------------------------------------------------------------------
+% This represents what the bst_node represents. 
+% It will contain a term() (aka the value of the node), bst_node() (aka the left side of the tree), bst_node(aka the right side of the tree)
 -type bst_node() :: {term(),bst_node(),bst_node()}.
+% This represents the binary search tree as a whole.
 -type bst() :: bst_node().
+% Our specification that indicates the following. 
+% The name of the function is add
+% It takes three parameters, 1) bst(), 2) term(), 3) fun((term(), term().
+% fun breakdown:
+% Checks to see if it is a function. If it is a function, it should take 1, 0, or -1. 
+% 1 is the right of the tree. 0 is equal. -1 is the left of the tree. 
+% If nil is passed into the function, then it will do a default comparison.
+% Returning to the add function, after the fun does it's thing, it will return the updated bstree. 
 -spec add(bst(),term(),fun((term(),term()) -> 1|0|-1) | nil()) -> bst().
-add(BST,nil,_)->
-	to_do.
+add(BST, nil, _)-> BST;
+add(nil, To_add, _) -> {To_add, nil, nil};
+add({Value, Next_l, Next_r}, To_add, Comparitor) ->
+	Comparison_function = case is_function(Comparitor) of 
+		true -> Comparitor;
+		_ -> fun(X, Y) -> default_compare(X, Y) end
+	end, 
+	case Comparison_function(To_add, Value) of
+		-1 -> 
+			{Value, add(Next_l, To_add, Comparison_function), Next_r};
+		_ ->
+			{Value, Next_l, add(Next_r, To_add, Comparison_function)}
+	end.
+
 
 %%%-------------------------------------------------------------------
 %%% @doc
