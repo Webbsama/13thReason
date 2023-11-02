@@ -37,12 +37,25 @@
 %%% Complexity - time: O(log n) space: O(log n)
 %%% @end
 %%%-------------------------------------------------------------------
+% Defining what an rbt_node is. 
+% Parameter one tells whether the node is red or black
+% Parameter two (term()) is a placeholder for what the node is holding. 
+% The two rbt_nodes are indicating that each parent node can have two child nodes
 -type rbt_node() :: {red | black,term(),rbt_node(),rbt_node()}.
+% Defining that our red black tree is made up of rbt_nodes
 -type rbt() :: rbt_node().
+% The function add is going to start with our rbt, the value being inserted into the rbt, 
+% a fun that will take two terms (X, Y) and should get back out a 1, 0, or -1. 
+% The nil() is stating that a return is optional.
 -spec add(rbt(),term(),fun((term(),term()) -> 1|0|-1) | nil()) -> rbt().
 
+% Clause 1 is creating our root node
 add(nil,To_add,_)->
-	to_do.
+	% Tree always starts with black, will need 
+	{black, To_add, nil, nil};
+% Case 2 we already have a root and need to add in a child node
+add(Root, To_add, Compatitor)->
+	to_do. 
 
 
 
@@ -73,8 +86,9 @@ contains(nil,_,_)->
 
 %% a default comparison function for values.
 -spec default_compare(term(),term())->1|0|-1.
-default_compare(X,Y) when X < Y->  
-	to_do.
+default_compare(X,Y) when X < Y-> -1;
+default_compare(X,Y) when X > Y-> 1;
+default_compare(_,_)-> 0.
 
 
 % balances the left branch of any RBT.
