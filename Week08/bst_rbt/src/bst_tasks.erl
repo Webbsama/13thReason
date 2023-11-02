@@ -49,8 +49,12 @@
 % If nil is passed into the function, then it will do a default comparison.
 % Returning to the add function, after the fun does it's thing, it will return the updated bstree. 
 -spec add(bst(),term(),fun((term(),term()) -> 1|0|-1) | nil()) -> bst().
+% Handle the case if a BST passed in to return a BST
 add(BST, nil, _)-> BST;
+% Handle what to do if nil is passed in... 
+% To_add is the value that is getting passed into the BST
 add(nil, To_add, _) -> {To_add, nil, nil};
+% What the add function is supposed to do. 
 add({Value, Next_l, Next_r}, To_add, Comparitor) ->
 	Comparison_function = case is_function(Comparitor) of 
 		true -> Comparitor;
