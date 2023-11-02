@@ -89,11 +89,39 @@ add({Value, Next_l, Next_r}, To_add, Comparitor) ->
 contains(nil,_,_)->
 	false;
 contains({Value,Next_l,Next_r},Search_value,Comparitor)->
-	to_do.
+	% Crying in Sam... more crying in Sam...
+	% Create our comparison function that is checking if our comparitor is a function and handles the cases as follows...
+	Comparison_function = case is_function(Comparitor) of
+		% If it is true, return our comparitor
+		true -> Comparitor;
+		% Handle our _ case, do the following function. 
+		% _ underscore is our catch all
+		_ -> fun(X, Y) -> default_compare(X, Y) end
+	% end our case from above checking our function
+	end, 
+	% Start our next case determines what to do once the serach_value and value comparison is done
+	case Comparison_function(Search_value, Value) of
+		% What to do if it is a 0
+		0 -> true;
+		% What to do if it is a -1
+		-1 -> 
+			% Check to see if it is contained in the next_l, search_value, and comparison_function
+			contains(Next_l, Search_value, Comparison_function);
+		% What to do for our catch all case
+		_ -> 
+			contains(Next_r, Search_value, Comparison_function)
+	end.
 
+% Default_compare is a helper function
+% Our function is taking in two terms and returning 1, 0, or -1. 
 -spec default_compare(term(),term())->1|0|-1.
-default_compare(X,Y) when X < Y-> 
-	to_do.
+% Our function needs to determin how to compare X ad Y
+% Case 1 handles when X < Y, it needs to return -1
+default_compare(X,Y) when X < Y -> -1; 
+% Case 2 handles when X > Y and it is going to return 1.
+default_compare(X, Y) when X > Y -> 1;
+% Case 3 handles when our catch all case is passed in and returns 0
+default_compare(_, _) -> 0.
 
 
 %%% Only include the eunit testing library and functions
