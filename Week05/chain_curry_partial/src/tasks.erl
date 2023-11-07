@@ -37,11 +37,11 @@
 %% Complexity - The greater of O(n) and O(f(m)) where f(m) is the worst efficiency class of the set of funs being chained
 %%
 
-chain(Links,Seed)->
+chain(_Links,_Seed)->
 	to_do.
 
 
-curry(F) -> 
+curry(_F) -> 
 	to_do.
 
 
