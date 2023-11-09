@@ -36,6 +36,12 @@ remove_min(Heap) ->
 
 
 % Test time BBy
+% 1. Understand the "In -> Out"
+% 2. Write the Happy Path Tests
+% 3. Code it
+% 4. Write the Nasty Thoughts Tests
+% 5. Code more
+% 6. Repeat steps 4 and 5 multiple times
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 
