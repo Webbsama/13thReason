@@ -39,11 +39,3 @@ merge({_Rank_a,Value_a,Next_al,Next_ar},{_Rank_b,Value_b,_Next_bl,_Next_br}=B) w
 merge({_Rank_a,_Value_a,_Next_al,_Next_ar}=A,{_Rank_b,Value_b,Next_bl,Next_br})->
 	build_node(Value_b,Next_bl,merge(A,Next_br)).
 
-
-
-
-
-
-
-
-
