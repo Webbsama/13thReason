@@ -6,7 +6,7 @@
 -type min_heap() :: heap_node().
 
 -spec is_empty(heap_node()) -> any() | nil.
-is_empty(nil)-> true,
+is_empty(nil) -> true;
 is_empty(_Heap) ->
     todo.
 
@@ -138,4 +138,4 @@ remove_min_test_() ->
         ?_assertEqual(nil, remove_min(nil))
     ].
 
-    -endif.
+-endif.
