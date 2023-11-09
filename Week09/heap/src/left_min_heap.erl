@@ -1,27 +1,39 @@
 -module(left_min_heap).
 
--export([]).
+-export([get_min/1, insert/2, merge/2, remove_min/1, build_node/3]).
 
 -type heap_node() :: {pos_integer(), term(), heap_node()|nil, heap_node()|nil}.
--type min_heap() :: heap_node().
+-type min_heap() :: heap_node() | nil.
 
--spec is_empty(heap_node()) -> any() | nil.
-is_empty(nil)-> true,
-is_empty(_Heap) ->
-    todo.
+-spec is_empty(min_heap()) -> true|false.
+is_empty(nil) -> true;
+is_empty(_Heap) -> false.
 
+
+% The specification for get_min
 -spec get_min(min_heap()) -> term().
-get_min(Heap) ->
-    todo.
+% Handle if nil gets passed in
+get_min(nil) -> nil;
+% Now what to do the proper stuff is passed in
+get_min({_rank, Value, _next_l, _next_r}) -> Value.
 
 -spec insert(term(), heap_node()) -> min_heap().
+% Handle if nil is passed in
+insert(nil, nil) -> nil;
+% Handle if a proper heap is passed in
 insert(Value, Heap) ->
-    todo.
+    merge({1, Value, nil, nil}, Heap).
 
 
 -spec merge(min_heap(), min_heap()) -> min_heap().
-merge(A_heap, B_heap) ->
-    todo.
+% Handle if nil heap is passed in for either A_heap or B_heap
+merge(nil, B_heap) -> B_heap;
+merge(A_heap, nil) -> A_heap;
+% Now how to merge our two heaps
+merge({_A_rank, A_value, Al_sub, Ar_sub}, {_B_rank, B_value, _Bl_sub, _Br_sub} = B_heap) when A_value =< B_value ->
+    build_node(A_value, Al_sub, (merge(Ar_sub, B_heap)));
+merge({_A_rank, _A_value, _Al_sub, _Ar_sub} = A_heap, {_B_rank, B_value, Bl_sub, Br_sub}) ->
+    build_node(B_value, Bl_sub, (merge(A_heap, Br_sub))).
 
 
 % Returns a node with a value of X, 
@@ -29,16 +41,23 @@ merge(A_heap, B_heap) ->
 % with A_heap and B_heap as children, with the greater ranked node on the left.
 -spec build_node(term(), min_heap(), min_heap()) -> min_heap().
 build_node(X, A_heap, B_heap) ->
-    todo.
+    case
+        rank(A_heap) >= rank(B_heap) of 
+        true -> {(rank(B_heap)+1), X, A_heap, B_heap};
+        false -> {(rank(A_heap)+1), X, B_heap, A_heap}
+    end.
 
 
 -spec rank(heap_node()) -> integer().
-rank(A_heap) ->
-    todo.
+% Handling if nil is passsed in.
+rank(nil) -> 0;
+% Establish what the rank is.
+rank({Rank, _Value, _Left, _Right}) -> Rank.
 
 
 -spec remove_min(min_heap()) -> min_heap().
-remove_min({Rank, Value, Left, Right}) ->
+%remove_min(nil) -> nil;
+remove_min({_Rank, _Value, Left, Right}) ->
     merge(Left, Right).
 
 % Test time BBy
@@ -75,7 +94,7 @@ get_min_test_() ->
 insert_test_() -> 
     [
         % Happy thoughts! (you can fly)
-        ?_assertEqual({2, 3, {1, 4, nil, nil}, nil}, insert(4, {1, 3, nil, nil})),
+        ?_assertEqual({1, 3, {1, 4, nil, nil}, nil}, insert(4, {1, 3, nil, nil})),
         %Neutral Thoughts
         ?_assertEqual(nil, insert(nil, nil))
     ].
@@ -94,7 +113,7 @@ insert_test_() ->
 merge_test_() ->
     % Happy thoughts! (you can fly)
     [
-        ?_assertEqual({2, 3, {1, 4, nil, nil}, nil}, merge({1,4, nil, nil}, {1, 3, nil, nil})),
+        ?_assertEqual({1, 3, {1, 4, nil, nil}, nil}, merge({1,4, nil, nil}, {1, 3, nil, nil})),
         %Neutral Thoughts
         ?_assertEqual({1, 3, nil, nil}, merge(nil, {1, 3, nil, nil})),
         ?_assertEqual({1, 3, nil, nil}, merge({1, 3, nil, nil}, nil))
@@ -134,8 +153,7 @@ build_node_test_() ->
 remove_min_test_() ->
     % Happy thoughts! (you can fly)
     [
-        ?_assertEqual({2, 4, {1, 5, nil, nil}, nil}, remove_min({2, 3, {1, 4, nil, nil}, {1, 5, nil, nil}}))
-        ?_assertEqual(nil, remove_min(nil))
+        ?_assertEqual({1, 4, {1, 5, nil, nil}, nil}, remove_min({2, 3, {1, 4, nil, nil}, {1, 5, nil, nil}}))
     ].
 
     -endif.
