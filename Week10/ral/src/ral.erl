@@ -5,5 +5,8 @@
 
 -module(ral).
 
--export().
+% Need to fix our export once functions have been created. 
+-export(todo).
+
+% Will need to add our eunit tests.
 
