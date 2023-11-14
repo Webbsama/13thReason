@@ -156,4 +156,4 @@ remove_min_test_() ->
         ?_assertEqual({1, 4, {1, 5, nil, nil}, nil}, remove_min({2, 3, {1, 4, nil, nil}, {1, 5, nil, nil}}))
     ].
 
-    -endif.
+-endif.
