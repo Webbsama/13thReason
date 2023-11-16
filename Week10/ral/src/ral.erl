@@ -17,10 +17,18 @@
 % tree :: {Count, Left, Right}
 -type tree() :: {pos_integer(), term(), tree()|nil, tree()|nil}.
 -type ral() :: [tree()].
--spec get() -> todo.
+
+%% get(RAL, Index) -> Item at Index
+-spec get(ral(), pos_integer()) -> term().
+get(RAL, Index) ->
+    todo.
 
 % Get's first helper function called search
--spec search() -> todo.
+% search() retrieves the correct tree in the RAL for the given index.
+%% search(RAL, Index, Skipped_indices) -> {fail|skipped_indices, tree|nil}
+-spec search(ral(), non_neg_integer(), non_neg_integer()) -> {non_neg_integer()|fail, tree()}.
+search(RAL, Index, Accum) ->
+    todo.
 
 % Get's secound helper function called build_bin_list
 -spec build_bin_list() -> todo.
@@ -48,6 +56,9 @@
 -include_lib("eunit/include/eunit.hrl").
 % First test will be for get function
 get_test_() ->
+    RAL = [
+
+    ],
     [
 
     ].
