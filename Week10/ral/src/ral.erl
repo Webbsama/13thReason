@@ -8,16 +8,16 @@
 % Need to fix our export once functions have been created. 
 -export([]).
 
-% Added a type for our ral()
--type ral() :: []
-
 % Our first main function will be the function called get.
 % Get has three helper functions.
 % 1) search
 % 2) build_bin_list
 % 3) find
-% The get function takes two parameters
--spec get(List, Integer) -> Value.
+
+% tree :: {Count, Left, Right}
+-type tree() :: {pos_integer(), term(), tree()|nil, tree()|nil}.
+-type ral() :: [tree()].
+-spec get() -> todo.
 
 % Get's first helper function called search
 -spec search() -> todo.
