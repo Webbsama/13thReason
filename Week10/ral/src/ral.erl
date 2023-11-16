@@ -25,18 +25,19 @@ get(RAL, Index) ->
 
 % Get's first helper function called search
 % search() retrieves the correct tree in the RAL for the given index.
-%% search(RAL, Index, Skipped_indices) -> {fail|skipped_indices, tree|nil}
+% Looking for the tree with the list index and return the tree number and the tree 
+%% search(RAL, Index, Skipped_indices) -> {skipped_indices, tree} | {fail, nil}
 -spec search(ral(), non_neg_integer(), non_neg_integer()) -> {non_neg_integer(), tree()} | {fail, nil}.
 search(RAL, Index, Accum) ->
     todo.
 
-% Get's secound helper function called build_bin_list
+% Get's secound helper function called build_bin_list 
 %% build_bin_list(
 -spec build_bin_list(integer(), integer()) -> bitstring().
 build_bin_list(N, Bit_space) ->
     todo.
 
-% Get's thrid helper function called find
+% Get's third helper function called find
 % Find has two parameters the 
 -spec find(tree(), bitstring()) -> integer(). 
 find(Tree, Transversal_list) ->
@@ -49,7 +50,7 @@ update() ->
     todo.
 
 % Replace is a helper function to update
--spec replace() -> todo. 
+-spec replace() -> todo.
 replace() ->
     todo.
 
@@ -88,9 +89,12 @@ get_test_() ->
     ].
 
 search_test_() ->
+    Tree_at_index_two = {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}},
     [
-        ?assertEqual(Expect, Expr)
-        ?assertEqual(Expect, Expr)
+        ?assertEqual({fail, nil}, search([], 1, 0)),
+        ?assertEqual({fail, nil}, search(Test_RAL, 100, 0)),
+        %% IF THIS BREAKS, WE PROBS NEED TO USE THE INDEX OF THE TREE, RATHER THAN N AS IN NTH TREE
+        ?assertEqual({3, Tree_at_index_two}, search(Test_RAL, 5, 0))
     ].
 
 build_bin_list_test_() ->
