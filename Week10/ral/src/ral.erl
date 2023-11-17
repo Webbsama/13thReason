@@ -45,8 +45,9 @@ find(Tree, Transversal_list) ->
 
 % Our second main function will be called update It changes a value
 % Update has one helper function called replace
--spec update(ral(),non_neg_integer()) -> ral().
-update() ->
+%% update(RAL, Index, Value, Accum) -> RAL
+-spec update(ral(),non_neg_integer(), term(), non_neg_integer()) -> ral().
+update(RAL, Index, Value, Accum) ->
     todo.
 
 % Replace is a helper function to update
@@ -71,15 +72,16 @@ link() ->
 -include_lib("eunit/include/eunit.hrl").
 % First test will be for get function
 % 
-Test_RAL = [
-    {zeroth, nil, nil},
-    {2 {first, nil, nil}, {second, nil, nil}},
-    {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}}
-].
+
 
 % Input -> Output
 % get(Test_RAL, 5) -> fifth
 get_test_() ->
+    Test_RAL = [
+        {zeroth, nil, nil},
+        {2 {first, nil, nil}, {second, nil, nil}},
+        {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}}
+    ],
     [
         ?assertEqual(nil, get([], 3)),
         ?assertEqual(zeroth, get(Test_RAL, 0)),
@@ -89,6 +91,11 @@ get_test_() ->
     ].
 
 search_test_() ->
+    Test_RAL = [
+        {zeroth, nil, nil},
+        {2 {first, nil, nil}, {second, nil, nil}},
+        {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}}
+    ],
     Tree_at_index_two = {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}},
     [
         ?assertEqual({fail, nil}, search([], 1, 0)),
