@@ -32,14 +32,16 @@ search(RAL, Index, Accum) ->
     todo.
 
 % Get's secound helper function called build_bin_list 
-%% build_bin_list(
--spec build_bin_list(integer(), integer()) -> [1|0].
+%% A traversal list is just the binary representation of the local index
+-type traversal_list() :: [1|0]. 
+%% build_bin_list(Local index, Binary space)
+-spec build_bin_list(integer(), integer()) -> traversal_list().
 build_bin_list(N, Bit_space) ->
     todo.
 
 % Get's third helper function called find
 % Find has two parameters the 
--spec find(tree(), [1|0]) -> integer().
+-spec find(tree(), traversal_list()) -> integer().
 find(Tree, Traversal_list) ->
     todo.
 
@@ -51,19 +53,19 @@ update(RAL, Index, Value, Accum) ->
     todo.
 
 % Replace is a helper function to update
--spec replace() -> todo.
-replace() ->
+-spec replace(tree(), traversal_list()) -> tree().
+replace(Tree, Traversal_list) ->
     todo.
 
 % Our third main function will be called cons
--spec cons() -> todo. 
-cons() ->
+-spec cons(tree(), ral()) -> ral().
+cons(Leaf, RAL) ->
     todo.
 
 % Our forth (and final) main function will be called link
--spec link() -> todo. 
-link() ->
-    todo. 
+-spec link(tree(), ral()) -> todo.
+link(Tree, RAL) ->
+    todo.
 
 % Will need to add our eunit tests.
 % There will be 5 eunit tests. This is one for each of our main functions
