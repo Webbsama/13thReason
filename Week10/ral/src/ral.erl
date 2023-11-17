@@ -33,13 +33,13 @@ search(RAL, Index, Accum) ->
 
 % Get's secound helper function called build_bin_list 
 %% build_bin_list(
--spec build_bin_list(integer(), integer()) -> bitstring().
+-spec build_bin_list(integer(), integer()) -> [1|0].
 build_bin_list(N, Bit_space) ->
     todo.
 
 % Get's third helper function called find
 % Find has two parameters the 
--spec find(tree(), bitstring()) -> integer(). 
+-spec find(tree(), [1|0]) -> integer().
 find(Tree, Transversal_list) ->
     todo.
 
