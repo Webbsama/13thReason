@@ -40,7 +40,7 @@ build_bin_list(N, Bit_space) ->
 % Get's third helper function called find
 % Find has two parameters the 
 -spec find(tree(), [1|0]) -> integer().
-find(Tree, Transversal_list) ->
+find(Tree, Traversal_list) ->
     todo.
 
 % Our second main function will be called update It changes a value
@@ -100,20 +100,26 @@ search_test_() ->
     [
         ?assertEqual({fail, nil}, search([], 1, 0)),
         ?assertEqual({fail, nil}, search(Test_RAL, 100, 0)),
-        %% IF THIS BREAKS, WE PROBS NEED TO USE THE INDEX OF THE TREE, RATHER THAN N AS IN NTH TREE
         ?assertEqual({3, Tree_at_index_two}, search(Test_RAL, 5, 0))
     ].
 
 build_bin_list_test_() ->
     [
-        ?assertEqual(Expect, Expr)
-        ?assertEqual(Expect, Expr)
+        ?assertEqual([1], build_bin_list(1, 2)),
+        ?assertEqual([1,0], build_bin_list(2, 4)),
+        ?assertEqual([0,1,1], build_bin_list(3, 8)),
+        ?assertEqual([1,1,1], build_bin_list(7, 8)),
+        ?assertEqual([1,0,0,0,1], build_bin_list(17, 32))
     ].
 
 
 find_test_() ->
+    Test_tree_1 = {2 {first, nil, nil}, {second, nil, nil}},
+    Test_tree_2 = {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}},
     [
-        ?assertEqual(Expect, Expr)
+        ?assertEqual(second, find(Test_tree_1, [1])),
+        ?assertEqual(fourth, find(Test_tree_2, [0, 1])),
+        ?assertEqual(sixth, find(Test_tree_2, [1, 1]))
     ].
 % Second test will be for update function
 update_test_() ->
