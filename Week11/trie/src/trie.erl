@@ -22,5 +22,10 @@ add(Item, Trie) ->
 -include_lib("eunit/include/eunit.hrl").
 
 % EUnit function tests go here
+lookup_test_() ->
+    todo.
+
+add_test_() ->
+    todo.
 
 -endif.
