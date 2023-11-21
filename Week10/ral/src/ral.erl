@@ -79,31 +79,39 @@ link(Tree, RAL) ->
 % Input -> Output
 % get(Test_RAL, 5) -> fifth
 get_test_() ->
-    Test_RAL = [
-        {zeroth, nil, nil},
-        {2 {first, nil, nil}, {second, nil, nil}},
-        {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}}
-    ],
+    {setup,
+    Test_RAL = fun() ->
+        [
+            {zeroth, nil, nil},
+            {2, {first, nil, nil}, {second, nil, nil}},
+            {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}}
+        ]
+    end,
+
     [
         ?assertEqual(nil, get([], 3)),
         ?assertEqual(zeroth, get(Test_RAL, 0)),
         ?assertEqual(second, get(Test_RAL, 2)),
-        ?assertEqual(fifth, get(Test_RAL, 5)),
+        ?assertEqual(fifth, get(Test_RAL, 5))
         % nasty thoughts
-    ].
+    ]}.
 
 search_test_() ->
-    Test_RAL = [
-        {zeroth, nil, nil},
-        {2 {first, nil, nil}, {second, nil, nil}},
-        {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}}
-    ],
+    {setup,
+    fun () ->
+        Test_RAL = [
+            {zeroth, nil, nil},
+            {2, {first, nil, nil}, {second, nil, nil}},
+            {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}}
+        ]
+    end,
+
     Tree_at_index_two = {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}},
     [
         ?assertEqual({fail, nil}, search([], 1, 0)),
         ?assertEqual({fail, nil}, search(Test_RAL, 100, 0)),
         ?assertEqual({3, Tree_at_index_two}, search(Test_RAL, 5, 0))
-    ].
+    ]}.
 
 build_bin_list_test_() ->
     [
@@ -116,7 +124,7 @@ build_bin_list_test_() ->
 
 
 find_test_() ->
-    Test_tree_1 = {2 {first, nil, nil}, {second, nil, nil}},
+    Test_tree_1 = {2, {first, nil, nil}, {second, nil, nil}},
     Test_tree_2 = {4, {2, {third, nil, nil}, {fourth, nil, nil}}, {2, {fifth, nil, nil}, {sixth, nil, nil}}},
     [
         ?assertEqual(second, find(Test_tree_1, [1])),
@@ -124,27 +132,27 @@ find_test_() ->
         ?assertEqual(sixth, find(Test_tree_2, [1, 1]))
     ].
 % Second test will be for update function
-update_test_() ->
-    [
-        ?assertEqual(Expect, Expr)
-    ].
+% update_test_() ->
+%     [
+%         ?assertEqual(Expect, update(RAL, Index, Value, Accum))
+%     ].
 
-% Third test will be for replace function 
-replace_test_() ->
-    [
-        ?assertEqual(Expect, Expr)
-    ].
+% % Third test will be for replace function 
+% replace_test_() ->
+%     [
+%         ?assertEqual(Expect, Expr)
+%     ].
 
-% Fourth test will be for cons function
-cons_test_() ->
-    [
-        ?assertEqual(Expect, Expr)
-    ].
+% % Fourth test will be for cons function
+% cons_test_() ->
+%     [
+%         ?assertEqual(Expect, Expr)
+%     ].
 
-% Fifth test will be for link function
-link_test_() ->
-    [
-        ?assertEqual(Expect, Expr)
-    ].
+% % Fifth test will be for link function
+% link_test_() ->
+%     [
+%         ?assertEqual(Expect, Expr)
+%     ].
 
 -endif.
