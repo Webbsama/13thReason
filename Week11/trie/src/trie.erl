@@ -22,23 +22,26 @@ lookup([], Trie) ->
 lookup(Target, Trie) ->
     [FirstLetter|Tail] = Target,
     {_Value, Children} = Trie,
-    Subtree = find_in_list(FirstLetter, Children),
-    case Subtree of
+    Subtrie = search_children(FirstLetter, Children),
+    case Subtrie of
         not_found ->
-            fail;
+            not_found;
         _ ->
-            lookup(Tail, Subtree)
+            lookup(Tail, Subtrie)
         end.
     
 % If an element in the list matches the patter, returns the element, otherwise return fail.
-find_in_list(_Target, []) -> not_found;
-find_in_list(Target, List = [{Value, _} = Child|T]) ->
+-spec search_children(term(), [trie_node()|nil]) -> trie_node()|nil.
+search_children(_Target, []) -> not_found;
+search_children(Target, [nil|T]) -> search_children(Target, T);
+search_children(Target, [{Value, Children}|T]) ->
     case Value == Target of
         true -> 
-            Child;
+            {Value, Children};
         _ -> 
-            find_in_list(Target, T)
+            search_children(Target, T)
     end.
+
 % add()
 -spec add([term()], trie_node()) -> trie_node().
 add(Item, Trie) ->
@@ -52,7 +55,7 @@ add(Item, Trie) ->
 lookup_test_() ->
     [
         % Happy Path
-        ?assertEqual(found, lookup("c", { "c"[Hello, nil]}))
+        ?assertEqual(found, lookup("c", { "c", [nil]})),
         ?assertEqual(found, lookup("cat", {"c", [{"a",[{"r", [nil]}, {"t", [nil]}]}]})),
         ?assertEqual(found, lookup("car", {"c", [{"a",[{"r", [nil]}, {"t", [nil]}]}]})),
         ?assertEqual(not_found, lookup("dog", {"c", [{"a",[{"r", [nil]}, {"t", [nil]}]}]}))
