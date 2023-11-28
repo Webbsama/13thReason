@@ -11,6 +11,8 @@
 % Helper function to flip our queue around
 -spec flip(list()) -> list().
 flip([]) -> [];
+flip([Item]) ->
+    [Item];
 flip(List) ->
     [Head | Tail] = List,
     flip(Tail)++Head.
@@ -27,17 +29,17 @@ empty(_) ->
 head({[],[]}) ->
     nil;
 head({[], Rear}) ->
-    [Head|Tail] = flip(Rear),
+    [Head|_Tail] = flip(Rear),
     Head;
-head(Queue) ->
-    {Front, Rear} = Queue,
-    [Head | Tail] = Front,
+head({Front, []}) ->
+    [Head|_Tail] = Front,
     Head.
 
 % Returns the the current Tail of the queue
 -spec tail(queue()) -> term().
-tail(Queue) ->
-    todo.
+tail({[], Rear}) ->
+    [Head, _Tail] = 
+    Head.
 
 % Adds an element to the back of the queue
 -spec enqueue(queue(), term()) -> queue().
@@ -81,6 +83,7 @@ head_test_() ->
         ?_assertEqual(nil, head({[], []})),
         ?_assertEqual("a", head({["a"], []})),
         ?_assertEqual("a", head({[], ["c", "b", "a"]}))
+        ?_assertEqual( , head({[a, b, c], f[e, d]}))
     ].
 
 tail_test_() -> 
