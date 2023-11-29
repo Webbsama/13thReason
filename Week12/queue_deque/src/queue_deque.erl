@@ -31,14 +31,18 @@ head({[],[]}) ->
 head({[], Rear}) ->
     [Head|_Tail] = flip(Rear),
     Head;
-head({Front, []}) ->
+head({Front, _Rear}) ->
     [Head|_Tail] = Front,
     Head.
 
 % Returns the the current Tail of the queue
 -spec tail(queue()) -> term().
+tail({[], []}) -> nil;
 tail({[], Rear}) ->
-    [Head, _Tail] = 
+    [Head|_Tail] = Rear,
+    Head;
+tail({Front, []}) ->
+    [Head|_Tail] = flip(Front),
     Head.
 
 % Adds an element to the back of the queue
@@ -82,8 +86,8 @@ head_test_() ->
     [
         ?_assertEqual(nil, head({[], []})),
         ?_assertEqual("a", head({["a"], []})),
-        ?_assertEqual("a", head({[], ["c", "b", "a"]}))
-        ?_assertEqual( , head({[a, b, c], f[e, d]}))
+        ?_assertEqual("a", head({[], ["c", "b", "a"]})),
+        ?_assertEqual(a, head({[a, b, c], [e, d]}))
     ].
 
 tail_test_() -> 
