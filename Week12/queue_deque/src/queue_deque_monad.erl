@@ -17,8 +17,6 @@
 -spec count(queue_monad()) -> non_neg_integer().
 count({_Queue, Count}) -> Count.
 
-
-
 % Helper function to flip our queue around
 -spec flip(list()) -> list().
 flip([]) -> [];
@@ -61,24 +59,23 @@ tail({{Front, []}, _Count}) ->
 enqueue({{[], []}, _Count}, Term) ->
     {{[Term], []}, 1};
 enqueue({{Front, Rear}, Count}, Term) -> 
-    {{Front, [Term] ++ Rear}, Count+1}. 
+    {{Front, [Term] ++ Rear}, Count+1}.
 
 % Returns an element from the front of the queue, (He's waited his turn)
 % Returns the updated queue F and R
 -spec dequeue(queue_monad()) -> queue_monad().
-dequeue({{[], []}}) -> {[], []};
-dequeue({{[], Rear}}) ->
-    dequeue({flip(Rear), []});
-dequeue({{[_H|[]], Rear}}) ->
-    {{[], Rear}};
-dequeue({[_H|T], Rear}) ->
-    {{T, Rear}}.
+dequeue({{[], []}, 0}) -> {{[], []}, 0};
+dequeue({{[], Rear}, Count}) ->
+    [_H|T] = flip(Rear),
+    {{T, []}, Count-1};
+dequeue({{[_H|T], Rear}, Count}) ->
+    {{T, Rear}, Count-1}.
 
 
 % Adds an element to the front of the queue
 -spec enqueue_front(queue_monad(), term()) -> queue_monad().
 enqueue_front({{Front, Rear}, Count}, Term) -> 
-    {{[Term] ++ Front, Rear}, Count}.
+    {{[Term] ++ Front, Rear}, Count+1}.
 
 
 % Returns an element from the back of the queue (He's given up on waiting)
@@ -88,9 +85,9 @@ dequeue_back({{[], []}, Count}) ->
     {{[], []}, Count};
 dequeue_back({{Front, []}, Count}) ->
     [_H|T] = flip(Front),
-    {{[], T}, Count};
+    {{[], T}, Count-1};
 dequeue_back({{F, [_H|T]}, Count}) -> 
-    {{F,T}, Count}.
+    {{F,T}, Count-1}.
 
 % Tests go here
 -ifdef(TEST).
@@ -157,7 +154,7 @@ enqueue_front_test_() ->
     [
         ?_assertEqual({{[a], []}, 1}, enqueue_front({{[], []}, 0}, a)),
         ?_assertEqual({{[c, a, b], []}, 3}, enqueue_front({{[a, b], []}, 2}, c)),
-        ?_assertEqual({{[d, a, b], [c]}, 4}, enqueue_front({{[a, b], [c]}, 3}, d)), % This test feels sus, we should revisit him
+        ?_assertEqual({{[d, a, b], [c]}, 4}, enqueue_front({{[a, b], [c]}, 3}, d)),
         ?_assertEqual({{[f, a, b], [e,d,c]}, 6}, enqueue_front({{[a,b], [e,d,c]}, 5}, f))
     ].
     
