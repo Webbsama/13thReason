@@ -15,7 +15,7 @@ flip([Item]) ->
     [Item];
 flip(List) ->
     [Head | Tail] = List,
-    flip(Tail)++Head.
+    flip(Tail)++[Head].
 
 % A queue (tuple) of F (Front) and R (Rear).
 -spec empty(queue()) -> boolean().
@@ -56,8 +56,10 @@ enqueue({Front, Rear}, Term) ->
 % Returns the updated queue F and R
 -spec dequeue(queue()) -> queue().
 dequeue({[], []}) -> {[], []};
+dequeue({[], Rear}) ->
+    dequeue({flip(Rear), []});
 dequeue({[_H|[]], Rear}) ->
-    {flip(Rear), []};
+    {[], Rear};
 dequeue({[_H|T], Rear}) ->
     {T, Rear}.
 
@@ -77,39 +79,39 @@ dequeue_back(Queue) ->
 -include_lib("eunit/include/eunit.hrl").
 flip_test() ->
     [
-        ?_assertEqual(["d", "c", "b", "a"], flip(["a", "b", "c", "d"])),
-        ?_assertEqual(["c", "b", "a"], flip(["a", "b", "c"])),
-        ?_assertEqual(["a"], flip(["a"])),
+        ?_assertEqual([d, c, b, a], flip([a, b, c, d])),
+        ?_assertEqual([c, b, a], flip([a, b, c])),
+        ?_assertEqual([a], flip([a])),
         ?_assertEqual([], flip([]))
     ].
 empty_test_() ->
     [
         ?_assertEqual(true, empty({[], []})),
-        ?_assertEqual(false, empty({["a"], ["b"]}))
+        ?_assertEqual(false, empty({[a], [b]}))
     ].
 
 head_test_() ->
     [
         ?_assertEqual(nil, head({[], []})),
-        ?_assertEqual("a", head({["a"], []})),
-        ?_assertEqual("a", head({[], ["c", "b", "a"]})),
+        ?_assertEqual(a, head({[a], []})),
+        ?_assertEqual(a, head({[], [c, b, a]})),
         ?_assertEqual(a, head({[a, b, c], [e, d]}))
     ].
 
 tail_test_() -> 
     [
         ?_assertEqual(nil, tail({[], []})),
-        ?_assertEqual("a", tail({["a"], []})),
-        ?_assertEqual("c", tail({[], ["c", "b", "a"]})),
-        ?_assertEqual("a", tail({["c", "b", "a"], []}))
+        ?_assertEqual(a, tail({[a], []})),
+        ?_assertEqual(c, tail({[], [c, b, a]})),
+        ?_assertEqual(a, tail({[c, b, a], []}))
     ].
 
 enqueue_test_() ->
     [
-        ?_assertEqual({["a"], []}, enqueue({[], []}, "a")),
-        ?_assertEqual({["a", "b"], ["c"]}, enqueue({["a", "b"], []}, "c")),
-        ?_assertEqual({["a", "b"], ["d","c"]}, enqueue({["a", "b"], ["c"]}, "d")),
-        ?_assertEqual({["a", "b"], ["e","d","c"]}, enqueue({["a", "b"], ["d","c"]}, "e"))
+        ?_assertEqual({[a], []}, enqueue({[], []}, a)),
+        ?_assertEqual({[a, b], [c]}, enqueue({[a, b], []}, c)),
+        ?_assertEqual({[a, b], [d,c]}, enqueue({[a, b], [c]}, d)),
+        ?_assertEqual({[a, b], [e,d,c]}, enqueue({[a, b], [d,c]}, e))
         % Ideas for other tests for enqueue?
     ].
 
@@ -117,31 +119,31 @@ dequeue_test_() ->
     [
         % I think that we should use atoms rather than strings due to Erlang's String/List ambiguity.
         ?_assertEqual({[], []}, dequeue({[],[]})),
-        ?_assertEqual({[], []}, dequeue({["a"], []})),
-        ?_assertEqual({["b"], ["c"]}, dequeue({["a", "b"], ["c"]})),
-        ?_assertEqual({["b"], ["d","c"]}, dequeue({["a", "b"], ["d","c"]})),
-        ?_assertEqual({[], ["e","d","c"]}, dequeue({["b"], ["e","d","c"]})),
-        ?_assertEqual({["d", "e"], []}, dequeue({[], ["e","d","c"]})) %is this possible? 
+        ?_assertEqual({[], []}, dequeue({[a], []})),
+        ?_assertEqual({[b], [c]}, dequeue({[a, b], [c]})),
+        ?_assertEqual({[b], [d,c]}, dequeue({[a, b], [d,c]})),
+        ?_assertEqual({[], [e,d,c]}, dequeue({[b], [e,d,c]})), % This test may be incorrect. According to the pseudocode, the result should be a reversed Rear in the Front's place.
+        ?_assertEqual({[d, e], []}, dequeue({[], [e,d,c]}))
         % The pseudocode says something about dequeue "enforcing" the notion that
         % the only time queue can be empty is when Front (f) is empty.
     ].
 
 enqueue_front_test_() ->
     [
-        ?_assertEqual({["a"], []}, enqueue_front({[], []}, "a")),
-        ?_assertEqual({["c", "a", "b"], []}, enqueue_front({["a", "b"], []}, "c")),
-        ?_assertEqual({["c", "a", "b"], ["d"]}, enqueue_front({["a", "b"], ["c"]}, "d")),
-        ?_assertEqual({["f", "a", "b"], ["e","d","c"]}, enqueue_front({["a","b"], ["e","d","c"]}, "f"))
+        ?_assertEqual({[a], []}, enqueue_front({[], []}, a)),
+        ?_assertEqual({[c, a, b], []}, enqueue_front({[a, b], []}, c)),
+        ?_assertEqual({[c, a, b], [d]}, enqueue_front({[a, b], [c]}, d)),
+        ?_assertEqual({[f, a, b], [e,d,c]}, enqueue_front({[a,b], [e,d,c]}, f))
     ].
     
 dequeue_back_test_() ->
     [
-        ?_assertEqual({[], []}, dequeue_back({["a"], []})),
-        ?_assertEqual({["a", "b"], []}, dequeue_back({["a", "b"], ["c"]})),
-        ?_assertEqual({["a", "b"], ["c"]}, dequeue_back({["a", "b"], ["d","c"]})),
-        ?_assertEqual({["b"], ["d","c"]}, dequeue_back({["b"], ["e","d","c"]})),
-        ?_assertEqual({[], ["d", "e"]}, dequeue_back({["e","d","c"], []})),
-        ?_assertEqual({[], ["d","c"]}, dequeue_back({[], ["e","d","c"]}))
+        ?_assertEqual({[], []}, dequeue_back({[a], []})),
+        ?_assertEqual({[a, b], []}, dequeue_back({[a, b], [c]})),
+        ?_assertEqual({[a, b], [c]}, dequeue_back({[a, b], [d,c]})),
+        ?_assertEqual({[b], [d,c]}, dequeue_back({[b], [e,d,c]})),
+        ?_assertEqual({[], [d, e]}, dequeue_back({[e,d,c], []})),
+        ?_assertEqual({[], [d,c]}, dequeue_back({[], [e,d,c]}))
     ].
 
 -endif.
