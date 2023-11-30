@@ -4,6 +4,7 @@
 
 % Rest of stuff here. 
 -type queue() :: {[term()], [term()]}.
+
 % Each time an element is added to the queue, prepend to R (Rear).
 % Each time element is removed from queue, remove from F (Front).
 % Note that when Front is empty Rear is reversed and Rear becomes the front
@@ -24,7 +25,7 @@ empty({[], []}) ->
 empty(_) ->
     false.
 
-% Returns what the current Head of the queue 
+% Returns what the current Head of the queue
 -spec head(queue()) -> term().
 head({[],[]}) ->
     nil;
@@ -67,16 +68,24 @@ dequeue({[_H|T], Rear}) ->
 % Adds an element to the front of the queue
 -spec enqueue_front(queue(), term()) -> queue().
 enqueue_front({Front, Rear}, Term) -> 
-    {[Term|Front], Rear}.
+    {[Term] ++ Front, Rear}.
+
+
 % Returns an element from the back of the queue (He's given up on waiting)
 % enqueue_front(queue, term) ->
 -spec dequeue_back(queue()) -> queue().
-dequeue_back(Queue) -> 
-    todo.
+dequeue_back({[], []}) ->
+    {[], []};
+dequeue_back({Front, []}) ->
+    [_H|T] = flip(Front),
+    {[], T};
+dequeue_back({F, [_H|T]}) -> 
+    {F,T}.
 
 % Tests go here
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
+
 flip_test() ->
     [
         ?_assertEqual([d, c, b, a], flip([a, b, c, d])),
@@ -122,17 +131,15 @@ dequeue_test_() ->
         ?_assertEqual({[], []}, dequeue({[a], []})),
         ?_assertEqual({[b], [c]}, dequeue({[a, b], [c]})),
         ?_assertEqual({[b], [d,c]}, dequeue({[a, b], [d,c]})),
-        ?_assertEqual({[], [e,d,c]}, dequeue({[b], [e,d,c]})), % This test may be incorrect. According to the pseudocode, the result should be a reversed Rear in the Front's place.
+        ?_assertEqual({[], [e,d,c]}, dequeue({[b], [e,d,c]})),
         ?_assertEqual({[d, e], []}, dequeue({[], [e,d,c]}))
-        % The pseudocode says something about dequeue "enforcing" the notion that
-        % the only time queue can be empty is when Front (f) is empty.
     ].
 
 enqueue_front_test_() ->
     [
         ?_assertEqual({[a], []}, enqueue_front({[], []}, a)),
         ?_assertEqual({[c, a, b], []}, enqueue_front({[a, b], []}, c)),
-        ?_assertEqual({[c, a, b], [d]}, enqueue_front({[a, b], [c]}, d)),
+        ?_assertEqual({[d, a, b], [c]}, enqueue_front({[a, b], [c]}, d)), % This test feels sus, we should revisit him
         ?_assertEqual({[f, a, b], [e,d,c]}, enqueue_front({[a,b], [e,d,c]}, f))
     ].
     
