@@ -47,22 +47,28 @@ tail({Front, []}) ->
 
 % Adds an element to the back of the queue
 -spec enqueue(queue(), term()) -> queue().
-enqueue(Queue, Term) -> 
-    todo.
+enqueue({[], []}, Term) ->
+    {[Term], []};
+enqueue({Front, Rear}, Term) -> 
+    {Front, [Term] ++ Rear}. 
 
-% Returns an element from the front of the queue's waited his turn
+% Returns an element from the front of the queue, (He's waited his turn)
 % Returns the updated queue F and R
--spec dequeue(queue()) -> term().
-dequeue(Queue) -> 
-    todo.
+-spec dequeue(queue()) -> queue().
+dequeue({[], []}) -> {[], []};
+dequeue({[_H|[]], Rear}) ->
+    {flip(Rear), []};
+dequeue({[_H|T], Rear}) ->
+    {T, Rear}.
+
 
 % Adds an element to the front of the queue
 -spec enqueue_front(queue(), term()) -> queue().
 enqueue_front(Queue, Term) -> 
     todo.
-% Returns an element from the back of the queue
-% (He's given up on waiting)enqueue_front(queue, term) ->
--spec dequeue_back(queue()) -> term().
+% Returns an element from the back of the queue (He's given up on waiting)
+% enqueue_front(queue, term) ->
+-spec dequeue_back(queue()) -> queue().
 dequeue_back(Queue) -> 
     todo.
 
@@ -109,12 +115,15 @@ enqueue_test_() ->
 
 dequeue_test_() ->
     [
-        ?_assertEqual(nil, dequeue({[],[]})),
+        % I think that we should use atoms rather than strings due to Erlang's String/List ambiguity.
+        ?_assertEqual({[], []}, dequeue({[],[]})),
         ?_assertEqual({[], []}, dequeue({["a"], []})),
         ?_assertEqual({["b"], ["c"]}, dequeue({["a", "b"], ["c"]})),
         ?_assertEqual({["b"], ["d","c"]}, dequeue({["a", "b"], ["d","c"]})),
         ?_assertEqual({[], ["e","d","c"]}, dequeue({["b"], ["e","d","c"]})),
-        ?_assertEqual({["d", "e"], []}, dequeue({[], ["e","d","c"]}))
+        ?_assertEqual({["d", "e"], []}, dequeue({[], ["e","d","c"]})) %is this possible? 
+        % The pseudocode says something about dequeue "enforcing" the notion that
+        % the only time queue can be empty is when Front (f) is empty.
     ].
 
 enqueue_front_test_() ->
