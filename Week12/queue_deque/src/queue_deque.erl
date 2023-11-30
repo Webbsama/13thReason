@@ -66,8 +66,8 @@ dequeue({[_H|T], Rear}) ->
 
 % Adds an element to the front of the queue
 -spec enqueue_front(queue(), term()) -> queue().
-enqueue_front(Queue, Term) -> 
-    todo.
+enqueue_front({Front, Rear}, Term) -> 
+    {[Term|Front], Rear}.
 % Returns an element from the back of the queue (He's given up on waiting)
 % enqueue_front(queue, term) ->
 -spec dequeue_back(queue()) -> queue().
